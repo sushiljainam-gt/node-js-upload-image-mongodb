@@ -10,10 +10,23 @@ const baseUrl = "http://localhost:8080/files/";
 
 const mongoClient = new MongoClient(url);
 
+const upsertPerson = async ({ name }) => {
+  await mongoClient.connect();
+
+  const database = mongoClient.db(dbConfig.database);
+  const persons = database.collection('persons');
+  return persons.updateOne(
+    { name },
+    { $set: { name } },
+    { upsert: true }
+  );
+}
+
 const uploadFiles = async (req, res) => {
   try {
     await upload(req, res);
     console.log(req.files);
+    console.log(req.body);
 
     if (req.files.length <= 0) {
       return res
@@ -21,6 +34,8 @@ const uploadFiles = async (req, res) => {
         .send({ message: "You must select at least 1 file." });
     }
 
+    const personName = req.body.person;
+    await upsertPerson({ name: req.body.person });
     return res.status(200).send({
       message: "Files have been uploaded.",
     });
