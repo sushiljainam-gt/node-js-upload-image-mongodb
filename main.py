@@ -27,7 +27,14 @@ def upload_file():
 		resp = jsonify({'message' : 'No file part in the request'})
 		resp.status_code = 400
 		return resp
-	
+	personName = request.args.get('person_name')
+	if(len(personName.strip())):
+		print('The person name is given')
+	else:
+		resp = jsonify({'message' : 'No file part in the request'})
+		resp.status_code = 400
+		return resp
+
 	files = request.files.getlist('files[]')
 	
 	errors = {}

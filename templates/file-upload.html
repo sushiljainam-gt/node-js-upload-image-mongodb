@@ -23,7 +23,7 @@
 				}
 				
 				$.ajax({
-					url: 'python-flask-files-upload', // point to server-side URL
+					url: 'python-flask-files-upload?person_name='+personName, // point to server-side URL
 					dataType: 'json', // what to expect back from server
 					cache: false,
 					contentType: false,
