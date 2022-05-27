@@ -45,6 +45,19 @@
 					}
 				});
 			});
+			$('#train').on('click', function () {
+				var form_data = new FormData();
+				$.ajax({
+					url: 'train',
+					dataType: 'json',
+					cache: false,
+					contentType: false,
+					processData: false,
+					type: 'post',
+					success: console.log,
+					error: console.error,
+				});
+			})
 		});
 	</script>
 </head>
@@ -59,6 +72,8 @@
 			<input type="text" id="person" name="person" placeholder="name for images" />
 			<br />
 			<button id="upload">Upload</button>
+			<br />
+			<button id="train">Start training</button>
 		</p>
 	</dl>
 </body>

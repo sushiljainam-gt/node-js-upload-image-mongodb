@@ -1,3 +1,4 @@
+from crypt import methods
 import os
 #import magic
 import urllib.request
@@ -98,6 +99,11 @@ def upload_file():
 		resp = jsonify(errors)
 		resp.status_code = 400
 		return resp
+
+@app.route('/train', methods=['POST'])
+def trainer():
+	print('start training')
+
 
 if __name__ == "__main__":
     app.run()
