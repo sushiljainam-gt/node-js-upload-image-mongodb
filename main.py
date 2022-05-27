@@ -4,6 +4,7 @@ import urllib.request
 from app import app
 from flask import Flask, flash, request, redirect, render_template, jsonify
 from werkzeug.utils import secure_filename
+import json
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'webp'])
 
@@ -15,7 +16,35 @@ except OSError as error:
 
 def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def checkNameInJsonMap(personName):
+	jsonFilePath = './trainDataMap.txt'
+	print(os.path.join(jsonFilePath))
+	# if not os.path.isfile(jsonFilePath):
+
+	file1 = open(jsonFilePath, 'r+')
+	count = 0
+	resNum = 0
+  
+	while True:
+		line = file1.readline()
 	
+		if not line:
+			file1.writelines(("{}={}\n".format(personName,count)))
+			resNum = count
+			break
+		count += 1
+		print("Line{}: {}".format(count, line.strip()))
+		name,nameNum=line.strip().split('=',1)
+		print("{}: {}".format(name,nameNum))
+		if name.strip() == personName.strip():
+			resNum = nameNum
+			break 
+	
+	file1.close()
+	return resNum
+
+
 @app.route('/')
 def upload_form():
 	return render_template('file-upload.html')
@@ -35,6 +64,7 @@ def upload_file():
 		resp.status_code = 400
 		return resp
 
+	numFolder = checkNameInJsonMap(personName)
 	files = request.files.getlist('files[]')
 	
 	errors = {}
@@ -43,7 +73,9 @@ def upload_file():
 	for file in files:
 		if file and allowed_file(file.filename):
 			filename = secure_filename(file.filename)
-			file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+			if not os.path.isdir(os.path.join(app.config['UPLOAD_FOLDER'], str(numFolder))):
+				os.mkdir(os.path.join(app.config['UPLOAD_FOLDER'], str(numFolder)))
+			file.save(os.path.join(app.config['UPLOAD_FOLDER'], str(numFolder), filename))
 			success = True
 		else:
 			errors[file.filename] = 'File type is not allowed'
