@@ -8,7 +8,11 @@
 			$('#upload').on('click', function () {
 				var form_data = new FormData();
 				var ins = document.getElementById('multiFiles').files.length;
-				
+				var personName = document.getElementById('person').value.trim();
+				if (personName.length <= 0) {
+					$('#msg').html('<span style="color:red">Person name is mandatory.</span>');
+					return;
+				}
 				if(ins == 0) {
 					$('#msg').html('<span style="color:red">Select at least one file</span>');
 					return;
@@ -48,8 +52,12 @@
 	<h2>Python Flask File(s) Upload - Select file(s) to upload</h2>
 	<dl>
 		<p>
+			<p>Keep the person name exactly same if uploading in multiple batches for same person.</p>
 			<p id="msg"></p>
 			<input type="file" id="multiFiles" name="files[]" multiple="multiple"/>
+			<br />
+			<input type="text" id="person" name="person" placeholder="name for images" />
+			<br />
 			<button id="upload">Upload</button>
 		</p>
 	</dl>
