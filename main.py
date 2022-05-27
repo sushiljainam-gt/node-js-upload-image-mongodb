@@ -2,8 +2,10 @@ import os
 #import magic
 import urllib.request
 from app import app
-from flask import Flask, flash, request, redirect, render_template, jsonify
+from flask import Flask, flash, request, redirect, render_template, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
+
+
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'webp'])
 
@@ -19,6 +21,10 @@ def allowed_file(filename):
 @app.route('/')
 def upload_form():
 	return render_template('file-upload.html')
+
+@app.route('/res/<path:path>')
+def send_report(path):
+    return send_from_directory('res', path)
 
 @app.route('/python-flask-files-upload', methods=['POST'])
 def upload_file():
