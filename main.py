@@ -9,9 +9,14 @@ import json
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'webp'])
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_DIR = app.config['UPLOAD_FOLDER']
+
+jsonFilePath = 'trainDataMap.txt'
 
 try:
-	os.mkdir(os.path.join(ROOT_DIR,app.config['UPLOAD_FOLDER']))
+	if not os.path.isdir(os.path.join(ROOT_DIR,UPLOAD_DIR)):
+		os.mkdir(os.path.join(ROOT_DIR,UPLOAD_DIR))
+	open(os.path.join(ROOT_DIR,jsonFilePath),'x')
 except OSError as error:
 	print(error)
 
@@ -19,7 +24,6 @@ def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def checkNameInJsonMap(personName):
-	jsonFilePath = './trainDataMap.txt'
 	print(os.path.join(ROOT_DIR, jsonFilePath))
 	# if not os.path.isfile(jsonFilePath):
 
@@ -74,9 +78,9 @@ def upload_file():
 	for file in files:
 		if file and allowed_file(file.filename):
 			filename = secure_filename(file.filename)
-			if not os.path.isdir(os.path.join(ROOT_DIR, app.config['UPLOAD_FOLDER'], str(numFolder))):
-				os.mkdir(os.path.join(ROOT_DIR, app.config['UPLOAD_FOLDER'], str(numFolder)))
-			file.save(os.path.join(ROOT_DIR, app.config['UPLOAD_FOLDER'], str(numFolder), filename))
+			if not os.path.isdir(os.path.join(ROOT_DIR, UPLOAD_DIR, str(numFolder))):
+				os.mkdir(os.path.join(ROOT_DIR, UPLOAD_DIR, str(numFolder)))
+			file.save(os.path.join(ROOT_DIR, UPLOAD_DIR, str(numFolder), filename))
 			success = True
 		else:
 			errors[file.filename] = 'File type is not allowed'
