@@ -36,9 +36,10 @@ const uploadFiles = async (req, res) => {
 
     const personName = req.body.person;
     await upsertPerson({ name: req.body.person });
-    return res.status(200).send({
-      message: "Files have been uploaded.",
-    });
+    return res.redirect('/uploadSuccess');
+    //  res.status(200).send({
+    //   message: "Files have been uploaded.",
+    // });
 
     // console.log(req.file);
 
