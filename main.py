@@ -3,6 +3,7 @@ import os
 from app import app
 from flask import Flask, flash, request, redirect, render_template, jsonify
 from werkzeug.utils import secure_filename
+from faceRec.tester import trainingFn
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'webp'])
 
@@ -10,6 +11,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_DIR = app.config['UPLOAD_FOLDER']
 
 jsonFilePath = 'trainDataMap.txt'
+trainResFilePath = 'trainingSaved.yml'
 
 try:
 	if not os.path.isdir(os.path.join(ROOT_DIR,UPLOAD_DIR)):
@@ -100,6 +102,10 @@ def upload_file():
 @app.route('/train', methods=['POST'])
 def trainer():
 	print('start training')
+	trainingFn(os.path.join(ROOT_DIR, UPLOAD_DIR), os.path.join(ROOT_DIR,trainResFilePath))
+	resp = jsonify({'message' : 'Training successfully done'})
+	resp.status_code = 200
+	return resp
 
 
 if __name__ == "__main__":
