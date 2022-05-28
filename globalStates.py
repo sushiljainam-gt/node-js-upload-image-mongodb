@@ -4,13 +4,11 @@ import json
 def nowTime():
     return int(datetime.now().strftime('%s'))
 
-def saveLastUpload(statePath):
-    print('saving last upload time')
-    nt = nowTime()
+def updateAnyKey(statePath, key, value):
+    print('saving '+key+':'+value)
     newText=''
     stateFile = open(statePath, 'r+')
     count = 0
-    resNum = 0
   
     while True:
         line = stateFile.readline()
@@ -20,10 +18,11 @@ def saveLastUpload(statePath):
             print("Line - {}: {}".format(count, line.strip()))
             key,value=line.strip().split('=',1)
             print("{}: {}".format(key,value))
-            if key.strip() == 'lastUploadTime':
-                newText = newText + "lastUploadTime={}\n".format(str(nt))
+            if key.strip() == key.strip():
+                newText = newText + key + "={}\n".format(str(nt))
             else:
                 newText = newText + line
+            print('newText so far')
             print(newText)
             print('newText so far')
         else:
@@ -33,19 +32,11 @@ def saveLastUpload(statePath):
     with open(statePath, "w") as f:
         f.write(newText)
 
-def saveLastTrain(statePath):
-    print('saving last training time')
-    nt = nowTime()
-    json_object = {}
-    # Opening JSON file
-    with open(statePath, 'r') as openfile:
-        # Reading from json file
-        json_object = json.load(openfile)
-        print(json_object)
-        # json_object.set('lastTrainTime', nt)
-    with open(statePath, 'r+') as convert_file:
-        convert_file.write(json.dumps(json_object))
+def saveLastUpload(statePath):
+    updateAnyKey(statePath, 'lastUploadTime', str(nowTime()))
 
+def saveLastTrain(statePath):
+    updateAnyKey(statePath, 'lastTrainTime', str(nowTime()))
 
 def isTrainingBehind(statePath):
     print('lastTrainingTime isBefore lastUploadTime')
