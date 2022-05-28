@@ -5,7 +5,7 @@ from app import app
 from flask import Flask, flash, request, redirect, render_template, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 from faceRec.tester import trainingFn
-
+import globalStates
 
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'webp'])
@@ -15,6 +15,7 @@ UPLOAD_DIR = app.config['UPLOAD_FOLDER']
 
 jsonFilePath = 'trainDataMap.txt'
 trainResFilePath = 'trainingSaved.yml'
+globalStatespath = 'globalsFaceApp.txt'
 
 try:
 	if not os.path.isdir(os.path.join(ROOT_DIR,UPLOAD_DIR)):
@@ -23,6 +24,8 @@ try:
 except OSError as error:
 	print(error)
 
+globalStates.init(os.path.join(ROOT_DIR, globalStatespath))
+
 def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -30,7 +33,7 @@ def checkNameInJsonMap(personName):
 	print(os.path.join(ROOT_DIR, jsonFilePath))
 	# if not os.path.isfile(jsonFilePath):
 
-	file1 = open(jsonFilePath, 'r+')
+	file1 = open(os.path.join(ROOT_DIR, jsonFilePath), 'r+')
 	count = 0
 	resNum = 0
   
@@ -78,6 +81,15 @@ def send_stats():
 	resp.status_code = 200
 	return resp
 
+@app.route('/detect-image', methods=['POST'])
+def detect_image():
+	print('start detecting and recognition')
+	trainingNeeded = globalStates.isTrainingBehind(os.path.join(ROOT_DIR, globalStatespath))
+	print('trainingNeeded:{}'.format(trainingNeeded))
+	resp = jsonify({'message' : 'Detected successfull', 'outputUrl': 'url'})
+	resp.status_code = 200
+	return resp
+
 @app.route('/python-flask-files-upload', methods=['POST'])
 def upload_file():
 	# check if the post request has the file part
@@ -110,11 +122,13 @@ def upload_file():
 			errors[file.filename] = 'File type is not allowed'
 	
 	if success and errors:
+		globalStates.saveLastUpload(os.path.join(ROOT_DIR, globalStatespath))
 		errors['message'] = 'File(s) successfully uploaded'
 		resp = jsonify(errors)
 		resp.status_code = 206
 		return resp
 	if success:
+		globalStates.saveLastUpload(os.path.join(ROOT_DIR, globalStatespath))
 		resp = jsonify({'message' : 'Files successfully uploaded'})
 		resp.status_code = 201
 		return resp
@@ -127,6 +141,7 @@ def upload_file():
 def trainer():
 	print('start training')
 	trainingFn(os.path.join(ROOT_DIR, UPLOAD_DIR), os.path.join(ROOT_DIR,trainResFilePath))
+	globalStates.saveLastTrain(os.path.join(ROOT_DIR, globalStatespath))
 	resp = jsonify({'message' : 'Training successfully done'})
 	resp.status_code = 200
 	return resp
