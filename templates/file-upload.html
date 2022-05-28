@@ -5,6 +5,7 @@
 	<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function (e) {
+			getStats();
 			$('#upload').on('click', function () {
 				var form_data = new FormData();
 				var ins = document.getElementById('multiFiles').files.length;
@@ -39,14 +40,15 @@
 								$('#msg').append(data + '<br/>');
 							}
 						})
+						getStats();
 					},
 					error: function (response) {
 						$('#msg').html(response.message); // display error response
+						getStats();
 					}
 				});
 			});
 			$('#train').on('click', function () {
-				var form_data = new FormData();
 				$.ajax({
 					url: 'train',
 					dataType: 'json',
@@ -54,10 +56,38 @@
 					contentType: false,
 					processData: false,
 					type: 'post',
-					success: console.log,
-					error: console.error,
+					success: (...args) => {
+						console.log(...args);
+						getStats();
+					},
+					error: (...args) => {
+						console.error(...args);
+						getStats();
+					},
 				});
 			})
+			function getStats() {
+				$.ajax({
+					url: 'stats',
+					dataType: 'json',
+					cache: false,
+					contentType: false,
+					processData: false,
+					type: 'get',
+					success: (response) => {
+						console.log(response);
+						$('#stats').html('');
+						$.each(response, function (key, data) {							
+							if(key !== 'message') {
+								$('#stats').append(key + ' -> ' + data + '<br/>');
+							} else {
+								$('#stats').append(data + '<br/>');
+							}
+						})
+					},
+					error: console.error,
+				});
+			}
 		});
 	</script>
 </head>
@@ -74,6 +104,8 @@
 			<button id="upload">Upload</button>
 			<br />
 			<button id="train">Start training</button>
+			<br />
+			<p id="stats"></p>
 		</p>
 	</dl>
 </body>
