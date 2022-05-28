@@ -13,6 +13,7 @@ def prepareTest():
     test_img=cv2.imread('TestImages/bg1.png')#test_img path
     faces_detected,gray_img=fr.faceDetection(test_img)
     print("faces_detected:",faces_detected)
+    return test_img,faces_detected,gray_img
 
 
 def trainingFn(trainingImageDirPath, trainDataSavePath):
@@ -20,15 +21,18 @@ def trainingFn(trainingImageDirPath, trainDataSavePath):
     faces,faceID=fr.labels_for_training_data(trainingImageDirPath)
     face_recognizer=fr.train_classifier(faces,faceID)
     face_recognizer.write(trainDataSavePath)
+    return face_recognizer
 
 def reuseTrainingData():
     #Uncomment below line for subsequent runs
     face_recognizer=cv2.face.LBPHFaceRecognizer_create()
     face_recognizer.read('trainingData.yml')#use this to load training data for subsequent runs
+    return face_recognizer
 
 def runTest():
     name={0:"P",1:"K"}#creating dictionary containing names for each label
-
+    test_img,faces_detected,gray_img = prepareTest()
+    face_recognizer = reuseTrainingData()
     for face in faces_detected:
         (x,y,w,h)=face
         roi_gray=gray_img[y:y+h,x:x+h]
