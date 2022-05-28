@@ -79,6 +79,7 @@
 						$('#stats').html('');
 						$.each(response, function (key, data) {							
 							if (key === 'persons') {
+								$('#stats').append('Registered persons (' + response[key].length + '):<br/>');
 								response[key].forEach(({ name, imageCount }) => {
 									$('#stats').append(name + ' has ' + imageCount + ' images.<br/>');
 								});
