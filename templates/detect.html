@@ -3,7 +3,7 @@
 
 <head>
 
-	
+
 	<!-- Required meta tags -->
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -63,21 +63,21 @@
 					}
 				}
 			};
-			$("#input-files").on("change", function () {
+			$("#multifiles").on("change", function () {
 				imagesPreview(this, "div.preview-images");
 				imagesPreview(this, "div.preview-images-detect");
 			});
 			getStats();
 			$('#upload').on('click', function () {
 				var form_data = new FormData();
-				var ins = document.getElementById('multiFiles').files.length;
+				var ins = document.getElementById('multifiles').files.length;
 				if (ins != 1) {
-					$('#msg').html('<span style="color:red">Select exactly one file</span>');
+					$('#msg').html('<span style="color:red">Select exactly one file</span>'); // TODO toaster
 					return;
 				}
 
 				for (var x = 0; x < ins; x++) {
-					form_data.append("files[]", document.getElementById('multiFiles').files[x]);
+					form_data.append("files[]", document.getElementById('multifiles').files[x]);
 				}
 
 				$.ajax({
@@ -91,16 +91,16 @@
 					success: function (response) { // display success response
 						$('#msg').html('');
 						$.each(response, function (key, data) {
-							if(response[key] instanceof Array) {
+							if (response[key] instanceof Array) { // TODO name.confidence display
 								$('#msg').append(key + ' length -> ' + response[key].length + '<br/>');
 								response[key].forEach((element) => {
-									$.each(element, function (nkey,nvalue) {
+									$.each(element, function (nkey, nvalue) {
 										$('#msg').append(nkey + ' -> ' + nvalue + '<br/>');
 									})
 								});
-							} else if(key !== 'message') {
-								if (data.includes('/')) {	
-									$('#msg').append(key + ' -> ' + '<a src="'+data+'">'+data+'</a>' + '<br/>');
+							} else if (key !== 'message') {
+								if (data.includes('/')) {
+									$('#msg').append(key + ' -> ' + '<a src="' + data + '">' + data + '</a>' + '<br/>');
 								} else {
 									$('#msg').append(key + ' -> ' + data + '<br/>');
 								}
@@ -131,25 +131,25 @@
 			<div class="box1"></div>
 			<h4 style="color: white; align-items: center;">Select Atleast one image to detect Wanted Person* </h4>
 			<input style="background-color: white; width: 400px; align-self: center; align-items: center;" type="file"
-				name="file" multiple id="input-files" class="form-control-file border" />
+				name="files[]" id="multifiles" class="form-control-file border" />
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="preview-images"></div>
 				</div>
 			</div>
 			<div class="box1"></div>
-			<button type="submit" class="btn btn-primary">Submit</button>
+			<button id="upload" type="submit" class="btn btn-primary">Submit</button>
 		</div>
-		<div  style="margin-left: 50%; height:  800px; ">
+		<div style="margin-left: 50%; height:  800px; ">
 			<div style="height: 200px; background-image: url('/res/images/wanted_3.jpeg'); "></div>
-		<div >
-			<button type="submit" class="btn btn-primary">Detect Person Name</button>
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="preview-images-detect"></div>
+			<div>
+				<button type="submit" class="btn btn-primary">Detect Person Name</button>
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="preview-images-detect"></div>
+					</div>
 				</div>
 			</div>
-		</div>
 		</div>
 	</div>
 	<!-- <div class="d-lg-flex half" style="background-color:#6866ce">
