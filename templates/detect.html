@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+	<title>Upload wanted person Info</title>
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<script type="text/javascript" src="/res/js/util.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function (e) {
+			getStats();
+			$('#upload').on('click', function () {
+				var form_data = new FormData();
+				var ins = document.getElementById('multiFiles').files.length;
+				if(ins != 1) {
+					$('#msg').html('<span style="color:red">Select exactly one file</span>');
+					return;
+				}
+				
+				for (var x = 0; x < ins; x++) {
+					form_data.append("files[]", document.getElementById('multiFiles').files[x]);
+				}
+				
+				$.ajax({
+					url: 'detect-image', // point to server-side URL
+					dataType: 'json', // what to expect back from server
+					cache: false,
+					contentType: false,
+					processData: false,
+					data: form_data,
+					type: 'post',
+					success: function (response) { // display success response
+						$('#msg').html('');
+						$.each(response, function (key, data) {							
+							if(key !== 'message') {
+								$('#msg').append(key + ' -> ' + data + '<br/>');
+							} else {
+								$('#msg').append(data + '<br/>');
+							}
+						})
+						getStats();
+					},
+					error: function (response) {
+						$('#msg').html(response.message); // display error response
+						getStats();
+					}
+				});
+			});
+		});
+	</script>
+</head>
+<body background ="/res/home.jpeg">
+	<h2>Upload image to search in system</h2>
+	<dl>
+		<p>
+			<!-- <p>Keep the person name exactly same if uploading in multiple batches for same person.</p> -->
+			<p id="msg"></p>
+			<input type="file" id="multiFiles" name="files[]" />
+			<br />
+			<!-- <input type="text" id="person" name="person" placeholder="name for images" /> -->
+			<br />
+			<button id="upload">Upload</button>
+			<br />
+			<!-- <button id="train">Start training</button> -->
+			<br />
+			<p id="stats"></p>
+		</p>
+	</dl>
+</body>

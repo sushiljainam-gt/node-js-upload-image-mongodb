@@ -5,9 +5,11 @@
 	<title>Upload wanted person Info</title>
 	<link rel="stylesheet" href="/res/css/toast.css">
 	<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<script type="text/javascript" src="/res/js/util.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function (e) {
 			$("#formcheck").hide();
+			getStats();
 			$('#upload').on('click', function () {
 				var form_data = new FormData();
 				var ins = document.getElementById('multiFiles').files.length;
@@ -46,14 +48,15 @@
 								$('#msg').append(data + '<br/>');
 							}
 						})
+						getStats();
 					},
 					error: function (response) {
 						$('#msg').html(response.message); // display error response
+						getStats();
 					}
 				});
 			});
 			$('#train').on('click', function () {
-				var form_data = new FormData();
 				$.ajax({
 					url: 'train',
 					dataType: 'json',
@@ -61,8 +64,14 @@
 					contentType: false,
 					processData: false,
 					type: 'post',
-					success: console.log,
-					error: console.error,
+					success: (...args) => {
+						console.log(...args);
+						getStats();
+					},
+					error: (...args) => {
+						console.error(...args);
+						getStats();
+					},
 				});
 			})
 			function showToast() {
@@ -120,8 +129,9 @@
 			<br />
 			<button id="detect">Detect</button>
 		</div>
-	
 		<!-- <button id="train">Start training</button> -->
+			<br />
+			<p id="stats"></p>
 		</p>
 	</dl>
 </body>
