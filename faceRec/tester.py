@@ -42,8 +42,8 @@ def runTest(nameGetter, trainDataSavePath, inputImgPath, imgOutPath):
         predicted_name=nameGetter(label)
         print("name:",predicted_name)
         fr.draw_rect(test_img,face)
-        if(confidence!=96.98802546113127):#If confidence more than 37 then don't print predicted face text on screen
-            continue
+        # if(confidence!=96.98802546113127):#If confidence more than 37 then don't print predicted face text on screen
+        #     continue
         fr.put_text(test_img,predicted_name,x,y)
 
     resized_img=cv2.resize(test_img,(1000,1000))
