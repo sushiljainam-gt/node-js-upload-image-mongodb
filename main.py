@@ -13,6 +13,7 @@ ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'webp'])
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_DIR = app.config['UPLOAD_FOLDER']
 TEST_DIR = app.config['TEST_DIR']
+DETECT_OUT_DIR = app.config['DETECT_OUT_DIR']
 
 jsonFilePath = 'trainDataMap.txt'
 trainResFilePath = 'trainingSaved.yml'
@@ -21,6 +22,10 @@ globalStatespath = 'globalsFaceApp.txt'
 try:
 	if not os.path.isdir(os.path.join(ROOT_DIR,UPLOAD_DIR)):
 		os.mkdir(os.path.join(ROOT_DIR,UPLOAD_DIR))
+	if not os.path.isdir(os.path.join(ROOT_DIR,TEST_DIR)):
+		os.mkdir(os.path.join(ROOT_DIR,TEST_DIR))
+	if not os.path.isdir(os.path.join(ROOT_DIR,DETECT_OUT_DIR)):
+		os.mkdir(os.path.join(ROOT_DIR,DETECT_OUT_DIR))
 	open(os.path.join(ROOT_DIR,jsonFilePath),'x')
 except OSError as error:
 	print(error)
@@ -123,8 +128,17 @@ def detect_image():
 	print('trainingNeeded:{}'.format(trainingNeeded))
 	if trainingNeeded:
 		trainer()
-	runTest(nameForNumberMap,os.path.join(ROOT_DIR,trainResFilePath),os.path.join(ROOT_DIR, TEST_DIR, filename))
-	resp = jsonify({'message' : 'Detected successfull', 'outputUrl': 'url'})
+	runTest(
+		nameForNumberMap,
+		os.path.join(ROOT_DIR,trainResFilePath),
+		os.path.join(ROOT_DIR, TEST_DIR, filename),
+		os.path.join(ROOT_DIR, DETECT_OUT_DIR, filename),
+	)
+	if not os.path.isfile(os.path.join(ROOT_DIR, DETECT_OUT_DIR, filename)):
+		resp = jsonify({'message' : 'Detection failed'})
+		resp.status_code = 401
+		return resp
+	resp = jsonify({'message' : 'Detected successfull', 'outputUrl': os.path.join(DETECT_OUT_DIR, filename)})
 	resp.status_code = 200
 	return resp
 

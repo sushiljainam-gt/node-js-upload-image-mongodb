@@ -47,6 +47,7 @@ def runTest(nameGetter, trainDataSavePath, inputImgPath, imgOutPath):
         fr.put_text(test_img,predicted_name,x,y)
 
     resized_img=cv2.resize(test_img,(1000,1000))
+    cv2.imwrite(imgOutPath, resized_img)
     # return resized_img.
     # cv2.imshow("face dtecetion tutorial",resized_img)
     # cv2.waitKey(0)#Waits indefinitely until a key is pressed
