@@ -60,9 +60,10 @@ def isTrainingBehind(statePath):
         else:
             break
     stateFile.close()
-    ttt = datetime.strptime(tt)
-    utt = datetime.strptime(ut)
-    return bool(int(ttt) <= int(utt))
+    print(tt)
+    print(ut)
+    print(bool(tt <= ut))
+    return bool(tt <= ut)
 
 
 def init(statePath):

@@ -76,7 +76,7 @@ def send_report(path):
 def send_stats():
 	resp = jsonify({
 		'persons':[{'name':'pc','imageCount':4}, {'name':'kr','imageCount':16}],
-		'traningNeeded':False,
+		'trainingNeeded':globalStates.isTrainingBehind(os.path.join(ROOT_DIR, globalStatespath)),
 		'timestamp':datetime.now()})
 	resp.status_code = 200
 	return resp
