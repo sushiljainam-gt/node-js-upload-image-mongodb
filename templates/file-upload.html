@@ -3,6 +3,7 @@
 <head>
 	<title>Upload wanted person Info</title>
 	<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<script type="text/javascript" src="/res/js/util.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function (e) {
 			getStats();
@@ -66,35 +67,6 @@
 					},
 				});
 			})
-			function getStats() {
-				$.ajax({
-					url: 'stats',
-					dataType: 'json',
-					cache: false,
-					contentType: false,
-					processData: false,
-					type: 'get',
-					success: (response) => {
-						console.log(response);
-						$('#stats').html('');
-						$.each(response, function (key, data) {							
-							if (key === 'persons') {
-								$('#stats').append('Registered persons (' + response[key].length + '):<br/>');
-								response[key].forEach(({ name, imageCount }) => {
-									$('#stats').append(name + ' has ' + imageCount + ' images.<br/>');
-								});
-							} else {
-								if (key !== 'message') {
-									$('#stats').append(key + ' -> ' + data + '<br/>');
-								} else {
-									$('#stats').append(data + '<br/>');
-								}
-							}
-						})
-					},
-					error: console.error,
-				});
-			}
 		});
 	</script>
 </head>

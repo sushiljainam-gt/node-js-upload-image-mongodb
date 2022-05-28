@@ -62,7 +62,7 @@ def upload_form():
 	return render_template('file-upload.html')	
 
 @app.route('/detect')
-def upload_form():
+def html_detect():
 	return render_template('detect.html')	
 
 @app.route('/res/<path:path>')
