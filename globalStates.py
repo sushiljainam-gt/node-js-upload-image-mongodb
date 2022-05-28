@@ -4,8 +4,8 @@ import json
 def nowTime():
     return int(datetime.now().strftime('%s'))
 
-def updateAnyKey(statePath, key, value):
-    print('saving '+key+':'+value)
+def updateAnyKey(statePath, fkey, fvalue):
+    print('saving '+fkey+':'+fvalue)
     newText=''
     stateFile = open(statePath, 'r+')
     count = 0
@@ -18,8 +18,8 @@ def updateAnyKey(statePath, key, value):
             print("Line - {}: {}".format(count, line.strip()))
             key,value=line.strip().split('=',1)
             print("{}: {}".format(key,value))
-            if key.strip() == key.strip():
-                newText = newText + key + "={}\n".format(str(nt))
+            if key.strip() == fkey.strip():
+                newText = newText + fkey + "=" + fvalue + "\n"
             else:
                 newText = newText + line
             print('newText so far')
@@ -40,17 +40,29 @@ def saveLastTrain(statePath):
 
 def isTrainingBehind(statePath):
     print('lastTrainingTime isBefore lastUploadTime')
-    json_object = {}
-    # Opening JSON file
-    with open(statePath, 'r') as openfile:
-        # Reading from json file
-        json_object = json.load(openfile)
-        print(json_object)
-        tt = json_object.get('lastTrainTime')
-        ut = json_object.get('lastUploadTime')
-        # ttt = datetime.strptime(tt)
-        # utt = datetime.strptime(ut)
-        return bool(int(tt) <= int(ut))
+
+    stateFile = open(statePath, 'r+')
+    count = 0
+    tt = 0
+    ut = 0
+    while True:
+        line = stateFile.readline()
+        
+        if line:
+            count += 1
+            print("Line - {}: {}".format(count, line.strip()))
+            key,value=line.strip().split('=',1)
+            print("{}: {}".format(key,value))
+            if key.strip() == 'lastUploadTime':
+                ut = int(value)
+            if key.strip() == 'lastTrainTime':
+                tt = int(value)
+        else:
+            break
+    stateFile.close()
+    ttt = datetime.strptime(tt)
+    utt = datetime.strptime(ut)
+    return bool(int(ttt) <= int(utt))
 
 
 def init(statePath):
