@@ -31,7 +31,11 @@
 						$('#msg').html('');
 						$.each(response, function (key, data) {							
 							if(key !== 'message') {
-								$('#msg').append(key + ' -> ' + data + '<br/>');
+								if (data.includes('/')) {	
+									$('#msg').append(key + ' -> ' + '<a src="'+data+'">'+data+'</a>' + '<br/>');
+								} else {
+									$('#msg').append(key + ' -> ' + data + '<br/>');
+								}
 							} else {
 								$('#msg').append(data + '<br/>');
 							}
