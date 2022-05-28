@@ -6,7 +6,7 @@ from flask import Flask, flash, request, redirect, render_template, jsonify, sen
 from werkzeug.utils import secure_filename
 from faceRec.tester import trainingFn, runTest
 import globalStates
-
+import uuid
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'webp'])
 
@@ -32,8 +32,11 @@ except OSError as error:
 
 globalStates.init(os.path.join(ROOT_DIR, globalStatespath))
 
+def getExt(filename):
+	return filename.rsplit('.', 1)[1].lower()
+
 def allowed_file(filename):
-	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+	return '.' in filename and getExt(filename) in ALLOWED_EXTENSIONS
 
 def checkNameInJsonMap(personName):
 	print(os.path.join(ROOT_DIR, jsonFilePath))
@@ -167,13 +170,15 @@ def detect_image():
 	
 	errors = {}
 	success = False
+	newFileName = ''
 	files = request.files.getlist('files[]')
 	for file in files:
 		if file and allowed_file(file.filename):
 			filename = secure_filename(file.filename)
+			newFileName = str(uuid.uuid4()) + '.' + getExt(filename)
 			if not os.path.isdir(os.path.join(ROOT_DIR, TEST_DIR)):
 				os.mkdir(os.path.join(ROOT_DIR, TEST_DIR))
-			file.save(os.path.join(ROOT_DIR, TEST_DIR, filename))
+			file.save(os.path.join(ROOT_DIR, TEST_DIR, newFileName))
 			success = True
 		else:
 			errors[file.filename] = 'File type is not allowed'
@@ -189,14 +194,14 @@ def detect_image():
 	runTest(
 		nameForNumberMap,
 		os.path.join(ROOT_DIR,trainResFilePath),
-		os.path.join(ROOT_DIR, TEST_DIR, filename),
-		os.path.join(ROOT_DIR, DETECT_OUT_DIR, filename),
+		os.path.join(ROOT_DIR, TEST_DIR, newFileName),
+		os.path.join(ROOT_DIR, DETECT_OUT_DIR, newFileName),
 	)
-	if not os.path.isfile(os.path.join(ROOT_DIR, DETECT_OUT_DIR, filename)):
+	if not os.path.isfile(os.path.join(ROOT_DIR, DETECT_OUT_DIR, newFileName)):
 		resp = jsonify({'message' : 'Detection failed'})
 		resp.status_code = 401
 		return resp
-	resp = jsonify({'message' : 'Detected successfull', 'outputUrl': os.path.join(DETECT_OUT_DIR, filename)})
+	resp = jsonify({'message' : 'Detected successfull', 'outputUrl': os.path.join(DETECT_OUT_DIR, newFileName)})
 	resp.status_code = 200
 	return resp
 
