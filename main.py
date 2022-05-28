@@ -85,6 +85,34 @@ def nameForNumberMap(personNum):
 	file1.close()
 	return resName
 
+def personsWithNameAndImageCount():
+	print('stats 1')
+	# [{'name':'pc','imageCount':4}, {'name':'kr','imageCount':16}]
+	
+	file1 = open(os.path.join(ROOT_DIR, jsonFilePath), 'r+')
+	count = 0
+	persons = []
+	while True:
+		line = file1.readline()
+	
+		if not line:
+			break
+		count += 1
+		print("Line{}: {}".format(count, line.strip()))
+		name,nameNum=line.strip().split('=',1)
+		print("{}: {}".format(name,nameNum))
+		imageCount = 0
+		if not os.path.isdir(os.path.join(ROOT_DIR, UPLOAD_DIR, str(nameNum))):
+			imageCount = 0
+		else:
+			onlyfiles = next(os.walk(os.path.join(ROOT_DIR, UPLOAD_DIR, str(nameNum))))[2] #dir is your directory path as string
+			imageCount = len(onlyfiles)
+		print(imageCount)
+		persons.append({'name':name,'imageCount':imageCount})
+	file1.close()
+	print(persons)
+	return persons
+
 @app.route('/')
 def index():
 	return render_template('index.html')
@@ -108,7 +136,7 @@ def sendDetectOut(path):
 @app.route('/stats')
 def send_stats():
 	resp = jsonify({
-		'persons':[{'name':'pc','imageCount':4}, {'name':'kr','imageCount':16}],
+		'persons':personsWithNameAndImageCount(),
 		'trainingNeeded':globalStates.isTrainingBehind(os.path.join(ROOT_DIR, globalStatespath)),
 		'timestamp':datetime.now()})
 	resp.status_code = 200
@@ -126,6 +154,11 @@ def trainer():
 @app.route('/detect-image', methods=['POST'])
 def detect_image():
 	print('start detecting and recognition')
+	persons = personsWithNameAndImageCount()
+	if not len(persons):
+		resp = jsonify({'message' : 'No training data provided yet'})
+		resp.status_code = 400
+		return resp
 	# check if the post request has the file part
 	if 'files[]' not in request.files:
 		resp = jsonify({'message' : 'No file part in the request'})
