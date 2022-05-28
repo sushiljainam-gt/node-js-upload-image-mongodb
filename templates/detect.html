@@ -29,8 +29,15 @@
 					type: 'post',
 					success: function (response) { // display success response
 						$('#msg').html('');
-						$.each(response, function (key, data) {							
-							if(key !== 'message') {
+						$.each(response, function (key, data) {
+							if(response[key] instanceof Array) {
+								$('#msg').append(key + ' length -> ' + response[key].length + '<br/>');
+								response[key].forEach((element) => {
+									$.each(element, function (nkey,nvalue) {
+										$('#msg').append(nkey + ' -> ' + nvalue + '<br/>');
+									})
+								});
+							} else if(key !== 'message') {
 								if (data.includes('/')) {	
 									$('#msg').append(key + ' -> ' + '<a src="'+data+'">'+data+'</a>' + '<br/>');
 								} else {

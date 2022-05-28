@@ -191,7 +191,7 @@ def detect_image():
 	print('trainingNeeded:{}'.format(trainingNeeded))
 	if trainingNeeded:
 		trainer()
-	runTest(
+	namesList = runTest(
 		nameForNumberMap,
 		os.path.join(ROOT_DIR,trainResFilePath),
 		os.path.join(ROOT_DIR, TEST_DIR, newFileName),
@@ -201,7 +201,11 @@ def detect_image():
 		resp = jsonify({'message' : 'Detection failed'})
 		resp.status_code = 401
 		return resp
-	resp = jsonify({'message' : 'Detected successfull', 'outputUrl': os.path.join(DETECT_OUT_DIR, newFileName)})
+	resp = jsonify({
+		'message' : 'Detected successfull',
+		'outputUrl': os.path.join(DETECT_OUT_DIR, newFileName),
+		'detected': namesList
+	})
 	resp.status_code = 200
 	return resp
 

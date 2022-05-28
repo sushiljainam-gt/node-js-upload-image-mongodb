@@ -33,6 +33,7 @@ def runTest(nameGetter, trainDataSavePath, inputImgPath, imgOutPath):
     # name={0:"P",1:"K"}#creating dictionary containing names for each label
     test_img,faces_detected,gray_img = prepareTest(inputImgPath)
     face_recognizer = reuseTrainingData(trainDataSavePath)
+    names=[]
     for face in faces_detected:
         (x,y,w,h)=face
         roi_gray=gray_img[y:y+h,x:x+h]
@@ -45,9 +46,11 @@ def runTest(nameGetter, trainDataSavePath, inputImgPath, imgOutPath):
         # if(confidence!=96.98802546113127):#If confidence more than 37 then don't print predicted face text on screen
         #     continue
         fr.put_text(test_img,predicted_name,x,y)
+        names.append({'name':predicted_name,'confidence':confidence})
 
     resized_img=cv2.resize(test_img,(1000,1000))
     cv2.imwrite(imgOutPath, resized_img)
+    return names
     # return resized_img.
     # cv2.imshow("face dtecetion tutorial",resized_img)
     # cv2.waitKey(0)#Waits indefinitely until a key is pressed
