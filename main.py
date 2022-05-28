@@ -61,6 +61,10 @@ def index():
 def upload_form():
 	return render_template('file-upload.html')	
 
+@app.route('/detect')
+def upload_form():
+	return render_template('detect.html')	
+
 @app.route('/res/<path:path>')
 def send_report(path):
     return send_from_directory('res', path)
