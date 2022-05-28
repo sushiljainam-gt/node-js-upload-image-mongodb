@@ -61,6 +61,10 @@ def index():
 def upload_form():
 	return render_template('file-upload.html')	
 
+@app.route('/index_form')
+def index_form():
+	return render_template('index_form.html')	
+
 @app.route('/detect')
 def html_detect():
 	return render_template('detect.html')	
