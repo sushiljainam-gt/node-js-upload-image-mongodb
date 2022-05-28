@@ -21,52 +21,192 @@
 </head>
 
 <body>
+    <title>Upload wanted person Info</title>
+    <link rel="stylesheet" href="/res/css/toast.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="/res/js/util.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(e) {
+            $("#formcheck").hide();
+            getStats();
+            $('#upload').on('click', function() {
+                var form_data = new FormData();
+                var ins = document.getElementById('Upload image').files.length;
+                var personName = document.getElementById('person').value.trim();
+                if (personName.length <= 0) {
+                    $('#msg').html('<span style="color:red">Person name is mandatory.</span>');
+                    return;
+                }
+                if (ins == 0) {
+                    $('#msg').html('<span style="color:red">Select at least one file</span>');
+                    return;
+                }
 
+                for (var x = 0; x < ins; x++) {
+                    form_data.append("files[]", document.getElementById('Upload image').files[x]);
+                }
 
-    <div class="d-lg-flex half">
-        <div class="bg order-1 order-md-2" style="background-image: url('/res/images/bg_most_wanted.jpeg');"></div>
-        <div class="contents order-2 order-md-1">
+                $.ajax({
+                    url: 'python-flask-files-upload?upload image=' + upload image, // point to server-side URL
+                    dataType: 'json', // what to expect back from server
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    data: form_data,
+                    type: 'post',
+                    success: function(response) { // display success response
+                        $('#msg').html('');
+                        $.each(response, function(key, data) {
+                            if (key !== 'message') {
+                                $('#msg').append(key + ' -> ' + data + '<br/>');
+                            } else {
+                                //upload msg show here 
 
-            <div class="container">
-                <div class="row align-items-center justify-content-center">
-                    <div class="col-md-7">
-                        <h3>Upload <strong>Wanting Person info:</strong></h3>
-                        <p class="mb-4">Hii this is a Face Recognition technology from which u can find any wanting person .</p>
-                        <form action="#" method="post">
-                            <div class="form-group first">
-                                <label for="name of wanting person">Name of Wanting Person</label>
-                                <input type="text" class="form-control" placeholder="Name " id="name">
-                            </div>
-                            <div class="form-group last mb-3">
-                                <label for="Upload Image">Upload Image</label>
-                                <input type="binary" class="form-control" placeholder="Your image" id="image">
-                            </div>
+                                viewSetupAfterRegistration();
+                                showToast();
+                                $('#msg').append(data + '<br/>');
+                            }
+                        })
+                        getStats();
+                    },
+                    error: function(response) {
+                        $('#msg').html(response.message); // display error response
+                        getStats();
+                    }
+                });
+            });
+            $('#train').on('click', function() {
+                $.ajax({
+                    url: 'train',
+                    dataType: 'json',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    type: 'post',
+                    success: (...args) => {
+                        console.log(...args);
+                        getStats();
+                    },
+                    error: (...args) => {
+                        console.error(...args);
+                        getStats();
+                    },
+                });
+            })
 
-                            <div class="d-flex mb-5 align-items-center">
-                                <label class="control control--checkbox mb-0"><span class="caption">Remember me</span>
-                  <input type="checkbox" checked="checked"/>
-                  <div class="control__indicator"></div>
-                </label>
-                                <span class="ml-auto"><a href="#" class="forgot-pass">Forgot Password</a></span>
-                            </div>
+            function showToast() {
+                var x = document.getElementById("snackbar");
+                x.className = "show";
+                setTimeout(function() {
+                    x.className = x.className.replace("show", "checkk");
+                }, 3000);
 
-                            <input type="submit" value="Log In" class="btn btn-block btn-primary">
+            }
 
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+            function viewSetupAfterRegistration() {
+                $("#msg").hide();
+                $("#header").hide();
+                $("#form1").hide();
+                $("#formcheck").show();
+                // $("#multiFiles").hide();
+                // $("#upload").hide();
+                // $("#train").hide();
+                // $("#text").hide();
+                // $("#text").hide();
+                // $("#upload_again").show();
+                // $("#detect").show();
+            }
 
+            function viewSetupUploadAgain() {
+                $("#msg").hide();
+                $("#header").show();
+                $("#form1").show();
+                $("#formcheck").hide();
+                // $("#multiFiles").show();
+                // $("#upload").show();
+                // $("#train").hide();
+                // $("#text").show();
+                // $("#upload_again").hide();
+                // $("#detect").hide();
+            }
+            $('#upload_again').on('click', viewSetupUploadAgain);
+        });
+    </script>
+    </head>
 
     </div>
-
-
-
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/main.js"></script>
+    <div id="formcheck">
+        <!-- <button id="train">Start training</button> -->
+        <br />
+        <p id="stats"></p>
+        </p>
+        </dl>
 </body>
+
+
+
+
+
+
+
+
+<div class="hero_bg_box">
+    <div class="img-box">
+        <img src="/res/images/bg_1.jpg" alt="">
+    </div>
+</div>
+
+
+<div class="contents order-1 order-md-2">
+
+    <div class="container">
+        <div class="row align-items-center justify-content-center">
+            <div class="col-md-7">
+
+                <h3>Upload <strong>Wanting Person info:</strong></h3>
+                <p class="mb-4">Hii this is a Face Recognition technology from which u can find any wanting person .</p>
+
+                <body background="/res/home.jpeg">
+                    <p id="msg"></p>
+                    <div class="contents order-1order-md-7 ">
+
+                        <div class="container">
+                            <div class="row align-items-center justify-content-center">
+                                <div class="col-md-7">
+                                </div>
+
+
+                                <form action="#" method="post">
+                                    <div class="form-group first">
+                                        <label for="name of wanting person">Name of Wanting Person</label>
+                                        <input type="text" class="form-control" placeholder="Name " id="name">
+                                    </div>
+                                    <div id="form1">
+                                        <input type="file" id="upload image" name="files[]" multiple="Upload images" />
+                                        <br />
+                                        <input type="text" id="person" name="person" placeholder="Reward if any" />
+                                        <br />
+
+                                        <div class="form-group last mb-3">
+                                            <button id="upload">Submit Info</button>
+                                        </div>
+
+
+                                </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+            </div>
+
+
+
+            <script src="js/jquery-3.3.1.min.js"></script>
+            <script src="js/popper.min.js"></script>
+            <script src="js/bootstrap.min.js"></script>
+            <script src="js/main.js"></script>
+            </body>
 
 </html>
