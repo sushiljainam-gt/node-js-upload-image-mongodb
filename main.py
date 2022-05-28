@@ -12,6 +12,7 @@ ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'webp'])
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_DIR = app.config['UPLOAD_FOLDER']
+TEST_DIR = app.config['TEST_DIR']
 
 jsonFilePath = 'trainDataMap.txt'
 trainResFilePath = 'trainingSaved.yml'
@@ -55,6 +56,8 @@ def checkNameInJsonMap(personName):
 	file1.close()
 	return resNum
 
+def nameForNumberMap(num):
+	return 'priyanka'
 
 @app.route('/')
 def index():
@@ -93,11 +96,34 @@ def trainer():
 @app.route('/detect-image', methods=['POST'])
 def detect_image():
 	print('start detecting and recognition')
+	# check if the post request has the file part
+	if 'files[]' not in request.files:
+		resp = jsonify({'message' : 'No file part in the request'})
+		resp.status_code = 400
+		return resp
+	
+	errors = {}
+	success = False
+	files = request.files.getlist('files[]')
+	for file in files:
+		if file and allowed_file(file.filename):
+			filename = secure_filename(file.filename)
+			if not os.path.isdir(os.path.join(ROOT_DIR, TEST_DIR)):
+				os.mkdir(os.path.join(ROOT_DIR, TEST_DIR))
+			file.save(os.path.join(ROOT_DIR, TEST_DIR, filename))
+			success = True
+		else:
+			errors[file.filename] = 'File type is not allowed'
+	if not success:
+		resp = jsonify({'message' : 'File upload failed'})
+		resp.status_code = 401
+		return resp
+
 	trainingNeeded = globalStates.isTrainingBehind(os.path.join(ROOT_DIR, globalStatespath))
 	print('trainingNeeded:{}'.format(trainingNeeded))
 	if trainingNeeded:
 		trainer()
-	runTest({0:'P',1:'K'},os.path.join(ROOT_DIR,trainResFilePath),os.path.join(ROOT_DIR,))
+	runTest(nameForNumberMap,os.path.join(ROOT_DIR,trainResFilePath),os.path.join(ROOT_DIR, TEST_DIR, filename))
 	resp = jsonify({'message' : 'Detected successfull', 'outputUrl': 'url'})
 	resp.status_code = 200
 	return resp
@@ -113,7 +139,7 @@ def upload_file():
 	if(len(personName.strip())):
 		print('The person name is given')
 	else:
-		resp = jsonify({'message' : 'No file part in the request'})
+		resp = jsonify({'message' : 'No person name in the request'})
 		resp.status_code = 400
 		return resp
 

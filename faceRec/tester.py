@@ -29,7 +29,7 @@ def reuseTrainingData(trainDataSavePath):
     face_recognizer.read(trainDataSavePath)#use this to load training data for subsequent runs
     return face_recognizer
 
-def runTest(nameDict, trainDataSavePath, inputImgPath): # , imgOutPath
+def runTest(nameGetter, trainDataSavePath, inputImgPath, imgOutPath):
     # name={0:"P",1:"K"}#creating dictionary containing names for each label
     test_img,faces_detected,gray_img = prepareTest(inputImgPath)
     face_recognizer = reuseTrainingData(trainDataSavePath)
@@ -39,16 +39,18 @@ def runTest(nameDict, trainDataSavePath, inputImgPath): # , imgOutPath
         label,confidence=face_recognizer.predict(roi_gray)#predicting the label of given image
         print("confidence:",confidence)
         print("label:",label)
+        predicted_name=nameGetter(label)
+        print("name:",predicted_name)
         fr.draw_rect(test_img,face)
-        predicted_name=nameDict[label]
         if(confidence!=96.98802546113127):#If confidence more than 37 then don't print predicted face text on screen
             continue
         fr.put_text(test_img,predicted_name,x,y)
 
     resized_img=cv2.resize(test_img,(1000,1000))
-    cv2.imshow("face dtecetion tutorial",resized_img)
-    cv2.waitKey(0)#Waits indefinitely until a key is pressed
-    cv2.destroyAllWindows
+    # return resized_img.
+    # cv2.imshow("face dtecetion tutorial",resized_img)
+    # cv2.waitKey(0)#Waits indefinitely until a key is pressed
+    # cv2.destroyAllWindows
 
 
 
