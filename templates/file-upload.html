@@ -1,11 +1,14 @@
 <!doctype html>
 <html>
+
 <head>
 	<title>Upload wanted person Info</title>
+	<link rel="stylesheet" href="/res/css/toast.css">
 	<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 	<script type="text/javascript" src="/res/js/util.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function (e) {
+			$("#formcheck").hide();
 			getStats();
 			$('#upload').on('click', function () {
 				var form_data = new FormData();
@@ -15,17 +18,17 @@
 					$('#msg').html('<span style="color:red">Person name is mandatory.</span>');
 					return;
 				}
-				if(ins == 0) {
+				if (ins == 0) {
 					$('#msg').html('<span style="color:red">Select at least one file</span>');
 					return;
 				}
-				
+
 				for (var x = 0; x < ins; x++) {
 					form_data.append("files[]", document.getElementById('multiFiles').files[x]);
 				}
-				
+
 				$.ajax({
-					url: 'python-flask-files-upload?person_name='+personName, // point to server-side URL
+					url: 'python-flask-files-upload?person_name=' + personName, // point to server-side URL
 					dataType: 'json', // what to expect back from server
 					cache: false,
 					contentType: false,
@@ -34,10 +37,14 @@
 					type: 'post',
 					success: function (response) { // display success response
 						$('#msg').html('');
-						$.each(response, function (key, data) {							
-							if(key !== 'message') {
+						$.each(response, function (key, data) {
+							if (key !== 'message') {
 								$('#msg').append(key + ' -> ' + data + '<br/>');
 							} else {
+								//upload msg show here 
+
+								viewSetupAfterRegistration();
+								showToast();
 								$('#msg').append(data + '<br/>');
 							}
 						})
@@ -67,22 +74,62 @@
 					},
 				});
 			})
+			function showToast() {
+				var x = document.getElementById("snackbar");
+				x.className = "show";
+				setTimeout(function () { x.className = x.className.replace("show", "checkk"); }, 3000);
+
+			}
+			function viewSetupAfterRegistration() {
+				$("#msg").hide();
+				$("#header").hide();
+				$("#form1").hide();
+				$("#formcheck").show();
+				// $("#multiFiles").hide();
+				// $("#upload").hide();
+				// $("#train").hide();
+				// $("#text").hide();
+				// $("#text").hide();
+				// $("#upload_again").show();
+				// $("#detect").show();
+			}
+			function viewSetupUploadAgain() {
+				$("#msg").hide();
+				$("#header").show();
+				$("#form1").show();
+				$("#formcheck").hide();
+				// $("#multiFiles").show();
+				// $("#upload").show();
+				// $("#train").hide();
+				// $("#text").show();
+				// $("#upload_again").hide();
+				// $("#detect").hide();
+			}
+			$('#upload_again').on('click', viewSetupUploadAgain);
 		});
 	</script>
 </head>
-<body background ="/res/home.jpeg">
+
+<body background="/res/home.jpeg">
 	<h2>Upload wanted person Info</h2>
 	<dl>
 		<p>
-			<p>Keep the person name exactly same if uploading in multiple batches for same person.</p>
-			<p id="msg"></p>
-			<input type="file" id="multiFiles" name="files[]" multiple="multiple"/>
+		<p id="header">Keep the person name exactly same if uploading in multiple batches for same person.</p>
+		<div id="snackbar">File Uploaded sucessfuly</div>
+		<p id="msg"></p>
+		<div id="form1">
+			<input type="file" id="multiFiles" name="files[]" multiple="multiple" />
 			<br />
 			<input type="text" id="person" name="person" placeholder="name for images" />
 			<br />
-			<button id="upload">Upload</button>
+			<button id="upload">Submit Info</button>
+		</div>
+		<div id="formcheck">
+			<button id="upload_again">Upload Another Person</button>
 			<br />
-			<button id="train">Start training</button>
+			<button id="detect">Detect</button>
+		</div>
+		<!-- <button id="train">Start training</button> -->
 			<br />
 			<p id="stats"></p>
 		</p>
