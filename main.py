@@ -101,6 +101,10 @@ def html_detect():
 def send_report(path):
     return send_from_directory('res', path)
 
+@app.route('/detectOutDir/<path:path>')
+def sendDetectOut(path):
+	return send_from_directory('detectOutDir', path)
+
 @app.route('/stats')
 def send_stats():
 	resp = jsonify({
