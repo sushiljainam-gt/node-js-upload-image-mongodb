@@ -1,3 +1,4 @@
+from datetime import datetime
 import os
 #import magic
 from app import app
@@ -63,6 +64,15 @@ def upload_form():
 @app.route('/res/<path:path>')
 def send_report(path):
     return send_from_directory('res', path)
+
+@app.route('/stats')
+def send_stats():
+	resp = jsonify({
+		'persons':[{'name':'pc','imageCount':4}, {'name':'kr','imageCount':16}],
+		'traningNeeded':False,
+		'timestamp':datetime.now()})
+	resp.status_code = 200
+	return resp
 
 @app.route('/python-flask-files-upload', methods=['POST'])
 def upload_file():

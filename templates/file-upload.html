@@ -78,10 +78,16 @@
 						console.log(response);
 						$('#stats').html('');
 						$.each(response, function (key, data) {							
-							if(key !== 'message') {
-								$('#stats').append(key + ' -> ' + data + '<br/>');
+							if (key === 'persons') {
+								response[key].forEach(({ name, imageCount }) => {
+									$('#stats').append(name + ' has ' + imageCount + ' images.<br/>');
+								});
 							} else {
-								$('#stats').append(data + '<br/>');
+								if (key !== 'message') {
+									$('#stats').append(key + ' -> ' + data + '<br/>');
+								} else {
+									$('#stats').append(data + '<br/>');
+								}
 							}
 						})
 					},
