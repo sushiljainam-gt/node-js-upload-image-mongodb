@@ -5,3 +5,4 @@ trainingImagesPython
 trainDataMap.txt
 .DS_Store
 old
+trainingSaved.yml
