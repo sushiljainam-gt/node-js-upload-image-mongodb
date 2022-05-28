@@ -7,3 +7,5 @@ trainDataMap.txt
 old
 trainingSaved.yml
 globalsFaceApp.txt
+detectOutDir
+testImages
