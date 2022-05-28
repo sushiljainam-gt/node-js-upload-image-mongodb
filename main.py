@@ -53,8 +53,12 @@ def checkNameInJsonMap(personName):
 
 
 @app.route('/')
+def index():
+	return render_template('index.html')
+
+@app.route('/file-upload')
 def upload_form():
-	return render_template('file-upload.html')
+	return render_template('file-upload.html')	
 
 @app.route('/res/<path:path>')
 def send_report(path):
