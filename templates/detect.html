@@ -65,7 +65,7 @@
 			};
 			$("#multifiles").on("change", function () {
 				imagesPreview(this, "div.preview-images");
-				imagesPreview(this, "div.preview-images-detect");
+				// imagesPreview(this, "div.preview-images-detect");
 			});
 			getStats();
 			$('#upload').on('click', function () {
@@ -100,6 +100,10 @@
 								});
 							} else if (key !== 'message') {
 								if (data.includes('/')) {
+									$($.parseHTML("<img>"))
+										.attr("src", data)
+										.appendTo("div.preview-images-detect");
+									// imagesPreview(this, "div.preview-images-detect")
 									$('#msg').append(key + ' -> ' + '<a src="' + data + '">' + data + '</a>' + '<br/>');
 								} else {
 									$('#msg').append(key + ' -> ' + data + '<br/>');
