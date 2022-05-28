@@ -4,7 +4,7 @@ import os
 from app import app
 from flask import Flask, flash, request, redirect, render_template, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
-from faceRec.tester import trainingFn
+from faceRec.tester import trainingFn, runTest
 import globalStates
 
 
@@ -81,11 +81,23 @@ def send_stats():
 	resp.status_code = 200
 	return resp
 
+@app.route('/train', methods=['POST'])
+def trainer():
+	print('start training')
+	trainingFn(os.path.join(ROOT_DIR, UPLOAD_DIR), os.path.join(ROOT_DIR,trainResFilePath))
+	globalStates.saveLastTrain(os.path.join(ROOT_DIR, globalStatespath))
+	resp = jsonify({'message' : 'Training successfully done'})
+	resp.status_code = 200
+	return resp
+
 @app.route('/detect-image', methods=['POST'])
 def detect_image():
 	print('start detecting and recognition')
 	trainingNeeded = globalStates.isTrainingBehind(os.path.join(ROOT_DIR, globalStatespath))
 	print('trainingNeeded:{}'.format(trainingNeeded))
+	if trainingNeeded:
+		trainer()
+	runTest({0:'P',1:'K'},os.path.join(ROOT_DIR,trainResFilePath),os.path.join(ROOT_DIR,))
 	resp = jsonify({'message' : 'Detected successfull', 'outputUrl': 'url'})
 	resp.status_code = 200
 	return resp
@@ -136,15 +148,6 @@ def upload_file():
 		resp = jsonify(errors)
 		resp.status_code = 400
 		return resp
-
-@app.route('/train', methods=['POST'])
-def trainer():
-	print('start training')
-	trainingFn(os.path.join(ROOT_DIR, UPLOAD_DIR), os.path.join(ROOT_DIR,trainResFilePath))
-	globalStates.saveLastTrain(os.path.join(ROOT_DIR, globalStatespath))
-	resp = jsonify({'message' : 'Training successfully done'})
-	resp.status_code = 200
-	return resp
 
 
 if __name__ == "__main__":
