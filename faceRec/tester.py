@@ -23,10 +23,10 @@ def trainingFn(trainingImageDirPath, trainDataSavePath):
     face_recognizer.write(trainDataSavePath)
     return face_recognizer
 
-def reuseTrainingData():
+def reuseTrainingData(trainDataSavePath):
     #Uncomment below line for subsequent runs
     face_recognizer=cv2.face.LBPHFaceRecognizer_create()
-    face_recognizer.read('trainingData.yml')#use this to load training data for subsequent runs
+    face_recognizer.read(trainDataSavePath)#use this to load training data for subsequent runs
     return face_recognizer
 
 def runTest():
