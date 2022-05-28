@@ -61,8 +61,29 @@ def checkNameInJsonMap(personName):
 	file1.close()
 	return resNum
 
-def nameForNumberMap(num):
-	return 'priyanka'
+def nameForNumberMap(personNum):
+	print(os.path.join(ROOT_DIR, jsonFilePath))
+	# if not os.path.isfile(jsonFilePath):
+
+	file1 = open(os.path.join(ROOT_DIR, jsonFilePath), 'r+')
+	count = 0
+	resName = 'unknown'
+  
+	while True:
+		line = file1.readline()
+	
+		if not line:
+			break
+		count += 1
+		print("Line{}: {}".format(count, line.strip()))
+		name,nameNum=line.strip().split('=',1)
+		print("{}: {}".format(name,nameNum))
+		if int(nameNum.strip()) == int(personNum):
+			resName = name
+			break 
+	
+	file1.close()
+	return resName
 
 @app.route('/')
 def index():
