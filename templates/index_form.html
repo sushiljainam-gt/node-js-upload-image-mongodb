@@ -107,13 +107,6 @@
                 $("#header").hide();
                 $("#form1").hide();
                 $("#formcheck").show();
-                // $("#multiFiles").hide();
-                // $("#upload").hide();
-                // $("#train").hide();
-                // $("#text").hide();
-                // $("#text").hide();
-                // $("#upload_again").show();
-                // $("#detect").show();
             }
 
             function viewSetupUploadAgain() {
@@ -121,12 +114,6 @@
                 $("#header").show();
                 $("#form1").show();
                 $("#formcheck").hide();
-                // $("#multiFiles").show();
-                // $("#upload").show();
-                // $("#train").hide();
-                // $("#text").show();
-                // $("#upload_again").hide();
-                // $("#detect").hide();
             }
             $('#upload_again').on('click', viewSetupUploadAgain);
         });
@@ -136,66 +123,89 @@
 
 <body>
 
-    <div class="hero_bg_box">
+    <!-- <div class="hero_bg_box">
         <div class="img-box">
             <img src="/res/images/bg_1.jpg" alt="">
         </div>
-    </div>
+    </div> -->
+    <div style="width: 100%; ">
 
-    <div class="contents order-1 order-md-2">
+        <div
+            style="width: 50%; height: 800px; float: left; background-image: url('/res/images/light_bg.jpeg'); justify-items: center; align-items: center; margin:0 auto;">
+            <div class="half">
+                <div class="bg order-1 order-md-2" style="background-image: url('/res/images/light_bg.jpeg');">
+                    <div class="contents order-1 order-md-2">
 
-        <div class="container">
-            <div class="row align-items-center justify-content-center">
-                <div class="col-md-7">
+                        <div class="container">
+                            <div class="row align-items-center justify-content-center">
+                                <div class="col-md-7">
 
-                    <h3><strong>Upload Wanting Person info:</strong></h3>
-                    <p class="mb-4">Hii this is a Face Recognition technology from which u can find any wanting person .
-                    </p>
+                                    <h3><strong>Upload Wanting Person info:</strong></h3>
+                                    <p class="mb-4">Hii this is a Face Recognition technology from which u can find any
+                                        wanting
+                                        person .
+                                    </p>
 
-                    <body background="/res/home.jpeg">
-                        <p id="msg"></p>
-                        <div class="contents order-1order-md-7 ">
+                                    <p id="msg"></p>
+                                    <div class="contents order-1order-md-7 ">
 
-                            <div class="container">
-                                <div class="row align-items-center justify-content-center">
-                                    <div class="col-md-7">
-                                    </div>
-                                    <div id="snackbar">File Uploaded sucessfuly</div>
+                                        <div class="container">
+                                            <div class="row align-items-center justify-content-center">
+                                                <div class="col-md-7">
+                                                </div>
+                                                <div id="snackbar">File Uploaded sucessfuly</div>
+                                                <div id="form1">
+                                                    <div class="form-group first">
+                                                        <label for="name of wanting person">Name of Wanting
+                                                            Person</label>
+                                                        <input type="text" class="form-control " placeholder="Name "
+                                                            id="person" name="person" />
+                                                    </div>
+                                                    <div class="form-group">
+
+                                                        <input type="file" id="multifiles" name="files[]"
+                                                            multiple="multiple" />
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <input type="text" id="reward" name="reward"
+                                                            placeholder="Reward if any" />
+
+                                                    </div>
 
 
-                                    <div id="form1">
-                                        <div class="form-group first">
-                                            <label for="name of wanting person">Name of Wanting Person</label>
-                                            <input type="text" class="form-control" placeholder="Name " id="person"
-                                                name="person" />
+                                                    <div class="form-group last mb-3">
+                                                        <button id="upload" class="btn btn-block btn-primary">Submit
+                                                            Info</button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <div id="formcheck" class="row align-items-cente justify-content-center">
+                                                <button id="upload_again" class="btn btn-block btn-primary">Upload
+                                                    Another
+                                                    Person</button>
+                                                <button id="detect" class="btn btn-block btn-primary">Detect</button>
+
+                                            </div>
+                                            <p id="stats"></p>
                                         </div>
-
-                                        <input type="file" id="multifiles" name="files[]" multiple="multiple" />
-                                        <br />
-
-                                        <input type="text" id="reward" name="reward" placeholder="Reward if any" />
-                                        <br />
-
-                                        <div class="form-group last mb-3">
-                                            <button id="upload">Submit Info</button>
-                                        </div>
                                     </div>
-                                    <div id="formcheck">
-                                        <button id="upload_again">Upload Another Person</button>
-                                        <br />
-                                        <button id="detect">Detect</button>
-                                    </div>
-                                    <p id="stats"></p>
-
                                 </div>
+
+
                             </div>
                         </div>
+                    </div> ̰
                 </div>
-
-
             </div>
         </div>
-    </div> ̰
+        <div
+            style="width: 50%; height: 800px; float: left; background-image: url('/res/images/bg_1.jpg'); justify-items: center; align-items: center; margin:0 auto;">
+
+        </div>
+    </div>
+
 </body>
 
 </html>
