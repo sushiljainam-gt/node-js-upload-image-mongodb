@@ -140,6 +140,10 @@ def html_about():
 def html_contact():
 	return render_template('contact.html')	
 	
+@app.route('/video')
+def html_video():
+	return render_template('videoStream.html')	
+
 @app.route('/res/<path:path>')
 def send_report(path):
     return send_from_directory('res', path)
