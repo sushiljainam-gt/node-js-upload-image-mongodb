@@ -9,6 +9,7 @@ function getStats() {
         success: (response) => {
             console.log(response);
             $('#stats').html('');
+            $('#stats').append('<br/> Registered Person Statics we can see here: <br/> <br/>')
             $.each(response, function (key, data) {							
                 if (key === 'persons') {
                     $('#stats').append('Registered persons (' + response[key].length + '):<br/>');

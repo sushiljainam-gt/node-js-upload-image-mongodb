@@ -136,6 +136,14 @@ def index_form():
 def html_detect():
 	return render_template('detect.html')
 
+@app.route('/about')
+def html_about():
+	return render_template('about.html')	
+
+@app.route('/contact')
+def html_contact():
+	return render_template('contact.html')	
+	
 @app.route('/video')
 def html_video():
 	print('will open subprocess')
