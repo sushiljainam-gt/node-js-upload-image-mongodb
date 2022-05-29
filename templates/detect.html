@@ -43,7 +43,7 @@
 
 		}
 	</style>
-
+	<script type="text/javascript" src="/res/js/json-to-table.js"></script>
 	<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 	<script type="text/javascript" src="/res/js/util.js"></script>
 	<script type="text/javascript">
@@ -68,10 +68,17 @@
 				// imagesPreview(this, "div.preview-images-detect");
 			});
 			getStats();
+			function showToast() {
+				var x = document.getElementById("snackbar");
+				x.className = "show";
+				setTimeout(function () { x.className = x.className.replace("show", "File uploaded"); }, 3000);
+
+			}
 			$('#upload').on('click', function () {
 				var form_data = new FormData();
 				var ins = document.getElementById('multifiles').files.length;
 				if (ins != 1) {
+					showToast();
 					$('#msg').html('<span style="color:red">Select exactly one file</span>'); // TODO toaster
 					return;
 				}
@@ -89,6 +96,11 @@
 					data: form_data,
 					type: 'post',
 					success: function (response) { // display success response
+						
+						var jsonHtmlTable = ConvertJsonToTable(response.detected, 'jsonTable', null, 'Download');
+						console.log(jsonHtmlTable);
+						$('#tablede').html('')
+						$('#tablede').append(jsonHtmlTable)
 						$('#msg').html('');
 						$.each(response, function (key, data) {
 							if (response[key] instanceof Array) { // TODO name.confidence display
@@ -127,7 +139,7 @@
 <body>
 
 	<div style="width: 100%; ">
-
+		<div id="snackbar">Test Once</div>
 		<div
 			style="width: 50%; height: 800px; float: left; background-image: url('/res/images/brown_bg_2.jpeg'); justify-items: center; align-items: center; margin:0 auto;">
 			<div class="box1"></div>
@@ -147,7 +159,10 @@
 		<div style="margin-left: 50%; height:  800px; ">
 			<div style="height: 200px; background-image: url('/res/images/wanted_3.jpeg'); "></div>
 			<div>
-				<button type="submit" class="btn btn-primary">Detect Person Name</button>
+				<div style="height: 20px; background-color: rgb(21, 185, 146);  ">Detect Person Name
+					<div id="tablede"></div>
+				</div>
+				<!-- <button type="submit" class="btn btn-primary">Detect Person Name</button> -->
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="preview-images-detect"></div>
