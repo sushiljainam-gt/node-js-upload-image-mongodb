@@ -43,7 +43,7 @@
 
 		}
 	</style>
-
+	<script type="text/javascript" src="/res/js/json-to-table.js"></script>
 	<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 	<script type="text/javascript" src="/res/js/util.js"></script>
 	<script type="text/javascript">
@@ -68,10 +68,17 @@
 				// imagesPreview(this, "div.preview-images-detect");
 			});
 			getStats();
+			function showToast() {
+				var x = document.getElementById("snackbar");
+				x.className = "show";
+				setTimeout(function () { x.className = x.className.replace("show", "File uploaded"); }, 3000);
+
+			}
 			$('#upload').on('click', function () {
 				var form_data = new FormData();
 				var ins = document.getElementById('multifiles').files.length;
 				if (ins != 1) {
+					showToast();
 					$('#msg').html('<span style="color:red">Select exactly one file</span>'); // TODO toaster
 					return;
 				}
@@ -89,6 +96,11 @@
 					data: form_data,
 					type: 'post',
 					success: function (response) { // display success response
+						
+						var jsonHtmlTable = ConvertJsonToTable(response.detected, 'jsonTable', null, 'Download');
+						console.log(jsonHtmlTable);
+						$('#tablede').html('')
+						$('#tablede').append(jsonHtmlTable)
 						$('#msg').html('');
 						$.each(response, function (key, data) {
 							if (response[key] instanceof Array) { // TODO name.confidence display
@@ -127,7 +139,7 @@
 <body>
 
 	<div style="width: 100%; ">
-
+		<div id="snackbar">Test Once</div>
 		<div
 			style="width: 50%; height: 800px; float: left; background-image: url('/res/images/brown_bg_2.jpeg'); justify-items: center; align-items: center; margin:0 auto;">
 			<div class="box1"></div>
@@ -147,7 +159,10 @@
 		<div style="margin-left: 50%; height:  800px; ">
 			<div style="height: 200px; background-image: url('/res/images/wanted_3.jpeg'); "></div>
 			<div>
-				<button type="submit" class="btn btn-primary">Detect Person Name</button>
+				<div style="height: 20px; background-color: rgb(21, 185, 146);  ">Detect Person Name
+					<div id="tablede"></div>
+				</div>
+				<!-- <button type="submit" class="btn btn-primary">Detect Person Name</button> -->
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="preview-images-detect"></div>
@@ -156,48 +171,6 @@
 			</div>
 		</div>
 	</div>
-	<!-- <div class="d-lg-flex half" style="background-color:#6866ce">
-        <div class="bg order-1 order-md-2" style="background-color:#16ba99"></div>
-        <div style="background-color:#ba1673">
-            <div class="container">
-                <div class="row align-items-center justify-content-center">
-                    <div class="col-md-7">
-                        <h3>Login to <strong>Colorlib</strong></h3>
-                        <p class="mb-4">Lorem ipsum dolor sit amet elit. Sapiente sit aut eos consectetur adipisicing.
-                        </p>
-                        <form action="#" method="post">
-                            <div class="form-group first">
-                                <label for="username">Username</label>
-                                <input type="text" class="form-control" placeholder="your-email@gmail.com"
-                                    id="username">
-                            </div>
-                            <div class="form-group last mb-3">
-                                <label for="password">Password</label>
-                                <input type="password" class="form-control" placeholder="Your Password" id="password">
-                            </div>
-
-                            <div class="d-flex mb-5 align-items-center">
-                                <label class="control control--checkbox mb-0"><span class="caption">Remember me</span>
-                                    <input type="checkbox" checked="checked" />
-                                    <div class="control__indicator"></div>
-                                </label>
-                                <span class="ml-auto"><a href="#" class="forgot-pass">Forgot Password</a></span>
-                            </div>
-
-                            <input type="submit" value="Log In" class="btn btn-block btn-primary">
-
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-    </div>
-    <script src="/res/js/jquery-3.3.1.min.js"></script>
-    <script src="/res/js/popper.min.js"></script>
-    <script src="/res/js/bootstrap.min.js"></script>
-    <script src="/res/js/main.js"></script> -->
-
+	
 
 </body>
