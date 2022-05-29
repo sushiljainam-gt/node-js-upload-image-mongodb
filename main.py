@@ -1,11 +1,15 @@
 from datetime import datetime
 import os
+import signal
+import sys
 #import magic
 from app import app
 from flask import Flask, flash, request, redirect, render_template, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 from faceRec.tester import trainingFn, runTest
 import globalStates
+import psutil
+# import subprocess
 import uuid
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'webp'])
@@ -45,10 +49,10 @@ def checkNameInJsonMap(personName):
 	file1 = open(os.path.join(ROOT_DIR, jsonFilePath), 'r+')
 	count = 0
 	resNum = 0
-  
+
 	while True:
 		line = file1.readline()
-	
+
 		if not line:
 			file1.writelines(("{}={}\n".format(personName,count)))
 			resNum = count
@@ -59,8 +63,8 @@ def checkNameInJsonMap(personName):
 		print("{}: {}".format(name,nameNum))
 		if name.strip() == personName.strip():
 			resNum = nameNum
-			break 
-	
+			break
+
 	file1.close()
 	return resNum
 
@@ -71,10 +75,10 @@ def nameForNumberMap(personNum):
 	file1 = open(os.path.join(ROOT_DIR, jsonFilePath), 'r+')
 	count = 0
 	resName = 'unknown'
-  
+
 	while True:
 		line = file1.readline()
-	
+
 		if not line:
 			break
 		count += 1
@@ -83,21 +87,21 @@ def nameForNumberMap(personNum):
 		print("{}: {}".format(name,nameNum))
 		if int(nameNum.strip()) == int(personNum):
 			resName = name
-			break 
-	
+			break
+
 	file1.close()
 	return resName
 
 def personsWithNameAndImageCount():
 	print('stats 1')
 	# [{'name':'pc','imageCount':4}, {'name':'kr','imageCount':16}]
-	
+
 	file1 = open(os.path.join(ROOT_DIR, jsonFilePath), 'r+')
 	count = 0
 	persons = []
 	while True:
 		line = file1.readline()
-	
+
 		if not line:
 			break
 		count += 1
@@ -122,19 +126,33 @@ def index():
 
 @app.route('/file-upload')
 def upload_form():
-	return render_template('file-upload.html')	
+	return render_template('file-upload.html')
 
 @app.route('/index_form')
 def index_form():
-	return render_template('index_form.html')	
+	return render_template('index_form.html')
 
 @app.route('/detect')
 def html_detect():
-	return render_template('detect.html')	
+	return render_template('detect.html')
 
 @app.route('/video')
 def html_video():
-	return render_template('videoStream.html')	
+	print('will open subprocess')
+	# cmd = "python video_detect.py"
+
+	# p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, 
+    #                  stderr=subprocess.PIPE)
+	# result, error = p.communicate()
+	# print(result.decode('utf-8'))
+	# print(error.decode('utf-8'))
+	try:
+		os.system('python video_detect.py &')
+		print('subprocess open')
+	except:
+		print('process not called')
+	print('should rediect')
+	return redirect('http://127.0.0.1:2204/video_feed')
 
 @app.route('/res/<path:path>')
 def send_report(path):
@@ -175,7 +193,7 @@ def detect_image():
 		resp = jsonify({'message' : 'No file part in the request'})
 		resp.status_code = 400
 		return resp
-	
+
 	errors = {}
 	success = False
 	newFileName = ''
@@ -234,10 +252,10 @@ def upload_file():
 
 	numFolder = checkNameInJsonMap(personName)
 	files = request.files.getlist('files[]')
-	
+
 	errors = {}
 	success = False
-	
+
 	for file in files:
 		if file and allowed_file(file.filename):
 			filename = secure_filename(file.filename)
@@ -247,7 +265,7 @@ def upload_file():
 			success = True
 		else:
 			errors[file.filename] = 'File type is not allowed'
-	
+
 	if success and errors:
 		globalStates.saveLastUpload(os.path.join(ROOT_DIR, globalStatespath))
 		errors['message'] = 'File(s) successfully uploaded'
@@ -264,6 +282,21 @@ def upload_file():
 		resp.status_code = 400
 		return resp
 
+def signal_handler(sig, frame):
+	print('application terminated.')
+	# PROCNAME = "python.exe"
+	for proc in psutil.process_iter():
+		# check whether the process name matches
+		print('ps name',proc.name())
+		if proc.name() == 'python3.10':
+			print('ps name -- py',proc.name())
+			print(proc)
+			proc.kill()
+	sys.exit(0)
+
+signal.signal(signal.SIGINT, signal_handler)
+# print('Press Ctrl+C')
+# signal.pause()
 
 if __name__ == "__main__":
     app.run()

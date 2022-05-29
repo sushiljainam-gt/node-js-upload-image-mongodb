@@ -2,6 +2,11 @@ import os
 from flask import Flask, Response
 import cv2
 from faceRec.tester import reuseTrainingData
+from setproctitle import setproctitle, getproctitle
+
+print('old:',getproctitle())
+setproctitle('aish_video_detect')
+print('new:',getproctitle())
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 trainResFilePath = 'trainingSaved.yml'
