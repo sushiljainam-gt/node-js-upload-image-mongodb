@@ -132,6 +132,14 @@ def index_form():
 def html_detect():
 	return render_template('detect.html')	
 
+@app.route('/about')
+def html_about():
+	return render_template('about.html')	
+
+@app.route('/contact')
+def html_contact():
+	return render_template('contact.html')	
+	
 @app.route('/res/<path:path>')
 def send_report(path):
     return send_from_directory('res', path)

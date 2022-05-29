@@ -18,10 +18,10 @@
 
 	<!-- Style -->
 	<link rel="stylesheet" href="c/res/ss/style.css">
-
+	<link rel="stylesheet" href="/res/css/toast.css">
 	<style>
 		div.preview-images>img {
-			width: 30%;
+			width: 40%;
 		}
 
 		div.preview-images-detect>img {
@@ -68,18 +68,24 @@
 				// imagesPreview(this, "div.preview-images-detect");
 			});
 			getStats();
-			function showToast() {
-				var x = document.getElementById("snackbar");
-				x.className = "show";
-				setTimeout(function () { x.className = x.className.replace("show", "File uploaded"); }, 3000);
-
+			function showToast(str='File uploaded',showPerm) {
+				var x = $("#snackbar");
+				x.text(str);
+				x.addClass("show");
+				if (!showPerm) {
+					setTimeout(function () { x.removeClass('show'); }, 3000);
+				}
+			}
+			function hideToast() {
+				var x = $("#snackbar");
+				x.removeClass('show');
 			}
 			$('#upload').on('click', function () {
 				var form_data = new FormData();
 				var ins = document.getElementById('multifiles').files.length;
 				if (ins != 1) {
-					showToast();
-					$('#msg').html('<span style="color:red">Select exactly one file</span>'); // TODO toaster
+					showToast('Please select a file');
+					// $('#msg').html('<span style="color:red">Select exactly one file</span>'); // TODO toaster
 					return;
 				}
 
@@ -87,6 +93,7 @@
 					form_data.append("files[]", document.getElementById('multifiles').files[x]);
 				}
 
+				showToast('Loading...',true);
 				$.ajax({
 					url: 'detect-image', // point to server-side URL
 					dataType: 'json', // what to expect back from server
@@ -96,10 +103,13 @@
 					data: form_data,
 					type: 'post',
 					success: function (response) { // display success response
-						
-						var jsonHtmlTable = ConvertJsonToTable(response.detected, 'jsonTable', null, 'Download');
+						hideToast();
+
+						var jsonHtmlTable = ConvertJsonToTable(response.detected.map(
+							person => ({'Name':person.name,'Confidence Score':person.confidence}) 
+						), 'jsonTable', null, 'Download');
 						console.log(jsonHtmlTable);
-						$('#tablede').html('')
+						$('#tablede').html('</br>')
 						$('#tablede').append(jsonHtmlTable)
 						$('#msg').html('');
 						$.each(response, function (key, data) {
@@ -121,13 +131,15 @@
 									$('#msg').append(key + ' -> ' + data + '<br/>');
 								}
 							} else {
-								$('#msg').append(data + '<br/>');
+								showToast(data);
+								// $('#msg').append(data + '<br/>');
 							}
 						})
 						getStats();
 					},
 					error: function (response) {
-						$('#msg').html(response.message); // display error response
+						showToast(response.message);
+						// $('#msg').html(response.message); // display error response
 						getStats();
 					}
 				});
@@ -139,29 +151,58 @@
 <body>
 
 	<div style="width: 100%; ">
-		<div id="snackbar">Test Once</div>
-		<div
-			style="width: 50%; height: 800px; float: left; background-image: url('/res/images/brown_bg_2.jpeg'); justify-items: center; align-items: center; margin:0 auto;">
+
+		<div class=" align-items-center justify-content-center"
+			style="width: 50%; height: 800px; float: left; background-color: rgb(239, 245, 245); justify-items: center; align-items: center; margin:0 auto;">
 			<div class="box1"></div>
-			<h2 style="color: white; align-items: center;">Detect Most Wanted Person </h2>
-			<div class="box1"></div>
-			<h4 style="color: white; align-items: center;">Select Atleast one image to detect Wanted Person* </h4>
-			<input style="background-color: white; width: 400px; align-self: center; align-items: center;" type="file"
-				name="files[]" id="multifiles" class="form-control-file border" />
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="preview-images"></div>
+			<div id="snackbar"></div>
+			<div class="half">
+				<div class="bg order-1 order-md-2" style="background-color: rgb(239, 245, 245);">
+					<div class="contents order-1 order-md-2">
+						
+						<div class="container form-group first" style="margin: 20px;">
+							<div class="form-group first">
+								<h2 style="color: rgb(22, 11, 11); align-items: center;">Detect Most Wanted Person </h2>
+							</div>
+							<div class="form-group first">
+								<h6 style="color: rgb(22, 11, 11); align-items: center;">Select Atleast one image to
+									detect
+									Wanted Person*
+								</h6>
+							</div>
+							<div class="form-group first">
+								<input
+									style="background-color: white; width: 400px; align-self: center; align-items: center;"
+									type="file" name="files[]" id="multifiles" class="form-control-file border" />
+								<div class="row">
+									<div class="col-sm-12">
+										<div class="preview-images"></div>
+									</div>
+								</div>
+							</div>
+							<div class="form-group last mb-3">
+								<button id="upload" type="submit" class="btn btn-primary">Detect Person</button>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
-			<div class="box1"></div>
-			<button id="upload" type="submit" class="btn btn-primary">Submit</button>
+
 		</div>
+
+
+
 		<div style="margin-left: 50%; height:  800px; ">
-			<div style="height: 200px; background-image: url('/res/images/wanted_3.jpeg'); "></div>
+			<div style="height: 250px; background-image: url('/res/images/wanted_txt_img.webp'); "></div>
 			<div>
-				<div style="height: 20px; background-color: rgb(21, 185, 146);  ">Detect Person Name
+				<!-- <div style="height: 20px; background-color: rgb(21, 185, 146);  ">Detect Person Name
+					
+				</div> -->
+				</br>
+				<div class=" align-items-center justify-content-center">
 					<div id="tablede"></div>
 				</div>
+
 				<!-- <button type="submit" class="btn btn-primary">Detect Person Name</button> -->
 				<div class="row">
 					<div class="col-sm-12">
@@ -171,6 +212,6 @@
 			</div>
 		</div>
 	</div>
-	
+
 
 </body>

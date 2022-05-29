@@ -46,7 +46,7 @@ def runTest(nameGetter, trainDataSavePath, inputImgPath, imgOutPath):
         # if(confidence!=96.98802546113127):#If confidence more than 37 then don't print predicted face text on screen
         #     continue
         fr.put_text(test_img,predicted_name,x,y)
-        names.append({'name':predicted_name,'confidence':confidence})
+        names.append({'name':predicted_name,'confidence':("{:.2f}".format(100-confidence) if confidence < 100 else 0) })
 
     resized_img=cv2.resize(test_img,(1000,1000))
     cv2.imwrite(imgOutPath, resized_img)
