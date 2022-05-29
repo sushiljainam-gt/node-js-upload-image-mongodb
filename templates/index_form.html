@@ -30,7 +30,7 @@
             getStats();
             $('#upload').on('click', function () {
                 var form_data = new FormData();
-                var ins = document.getElementById('Upload image').files.length;
+                var ins = document.getElementById('multifiles').files.length;
                 var personName = document.getElementById('person').value.trim();
                 if (personName.length <= 0) {
                     $('#msg').html('<span style="color:red">Person name is mandatory.</span>');
@@ -42,11 +42,11 @@
                 }
 
                 for (var x = 0; x < ins; x++) {
-                    form_data.append("files[]", document.getElementById('Upload image').files[x]);
+                    form_data.append("files[]", document.getElementById('multifiles').files[x]);
                 }
 
                 $.ajax({
-                    url: 'python-flask-files-upload?upload image=' + upload image, // point to server-side URL
+                    url: 'python-flask-files-upload?person_name=' + personName, // point to server-side URL
                     dataType: 'json', // what to expect back from server
                     cache: false,
                     contentType: false,
@@ -135,12 +135,12 @@
 
 
 <body>
+
     <div class="hero_bg_box">
         <div class="img-box">
             <img src="/res/images/bg_1.jpg" alt="">
         </div>
     </div>
-
 
     <div class="contents order-1 order-md-2">
 
@@ -160,28 +160,33 @@
                                 <div class="row align-items-center justify-content-center">
                                     <div class="col-md-7">
                                     </div>
+                                    <div id="snackbar">File Uploaded sucessfuly</div>
 
 
-                                    <form action="#" method="post">
+                                    <div id="form1">
                                         <div class="form-group first">
                                             <label for="name of wanting person">Name of Wanting Person</label>
-                                            <input type="text" class="form-control" placeholder="Name " id="name">
+                                            <input type="text" class="form-control" placeholder="Name " id="person"
+                                                name="person" />
                                         </div>
-                                        <div id="form1">
-                                            <input type="file" id="upload image" name="files[]"
-                                                multiple="Upload images" />
-                                            <br />
-                                            <div id="snackbar">File Uploaded sucessfuly</div>
 
-                                            <input type="text" id="person" name="person" placeholder="Reward if any" />
-                                            <br />
+                                        <input type="file" id="multifiles" name="files[]" multiple="multiple" />
+                                        <br />
 
-                                            <div class="form-group last mb-3">
-                                                <button id="upload">Submit Info</button>
-                                            </div>
+                                        <input type="text" id="reward" name="reward" placeholder="Reward if any" />
+                                        <br />
 
+                                        <div class="form-group last mb-3">
+                                            <button id="upload">Submit Info</button>
+                                        </div>
+                                    </div>
+                                    <div id="formcheck">
+                                        <button id="upload_again">Upload Another Person</button>
+                                        <br />
+                                        <button id="detect">Detect</button>
+                                    </div>
+                                    <p id="stats"></p>
 
-                                    </form>
                                 </div>
                             </div>
                         </div>
